@@ -1,0 +1,1 @@
+g++ -std=c++11 main.cpp dns_server.cpp dns_resolver.cpp dns_message.cpp -o dns.exe -lws2_32 
