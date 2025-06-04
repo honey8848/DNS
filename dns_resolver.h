@@ -7,53 +7,23 @@
 #ifndef DNS_RESOLVER_H
 #define DNS_RESOLVER_H
 
-#include <string>
-#include <map>
-#include <mutex>
+#include <winsock2.h>
 
-/**
- * @class DNSResolver
- * @brief DNS解析器类，负责域名解析和缓存管理
- */
-class DNSResolver {
-public:
-    /**
-     * @brief 构造函数
-     */
-    DNSResolver();
+// 域名解析器结构体
+typedef struct {
+    char** domains;     // 域名数组
+    char** ips;         // IP地址数组
+    size_t count;       // 域名-IP对的数量
+    size_t capacity;    // 数组容量
+    CRITICAL_SECTION cs; // 临界区
+} DNSResolver;
 
-    /**
-     * @brief 加载域名映射文件
-     * @param filename 映射文件的路径
-     * @return 加载是否成功
-     */
-    bool loadDomainMap(const std::string& filename);
-
-    /**
-     * @brief 本地解析域名
-     * @param domain 要解析的域名
-     * @param isBlocked 输出参数，指示域名是否被屏蔽
-     * @return 解析得到的IP地址，如果解析失败则返回空字符串
-     */
-    std::string resolveLocally(const std::string& domain, bool& isBlocked);
-
-    /**
-     * @brief 查询外部DNS服务器
-     * @param domain 要查询的域名
-     * @return 查询得到的IP地址，如果查询失败则返回空字符串
-     */
-    std::string queryExternalDNS(const std::string& domain);
-
-    /**
-     * @brief 缓存外部DNS查询结果
-     * @param domain 域名
-     * @param ip 对应的IP地址
-     */
-    void cacheExternalResult(const std::string& domain, const std::string& ip);
-
-private:
-    std::map<std::string, std::string> domainIPMap;  ///< 域名到IP的映射表
-    std::mutex mapMutex;                             ///< 用于保护映射表的互斥锁
-};
+// 函数声明
+DNSResolver* createResolver(void);
+void destroyResolver(DNSResolver* resolver);
+int loadDomainMap(DNSResolver* resolver, const char* filename);
+char* resolveLocally(DNSResolver* resolver, const char* domain, int* isBlocked);
+char* queryExternalDNS(const char* domain);
+void cacheExternalResult(DNSResolver* resolver, const char* domain, const char* ip);
 
 #endif // DNS_RESOLVER_H 

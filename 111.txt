@@ -1,6 +1,0 @@
-g++ -std=c++11 main.cpp dns_server.cpp dns_resolver.cpp dns_message.cpp -o dns.exe -lws2_32 
-compile.bat
-
-nslookup ~ 127.0.0.1
-
-cd /d D:\VScode\DNS\lyx

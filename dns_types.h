@@ -7,7 +7,7 @@
 #ifndef DNS_TYPES_H
 #define DNS_TYPES_H
 
-#include <cstdint>
+#include <stdint.h>
 
 /**
  * @struct DNSHeader

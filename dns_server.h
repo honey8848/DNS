@@ -9,55 +9,25 @@
 
 #include <winsock2.h>
 #include "dns_resolver.h"
+#include <windows.h>
 
-/**
- * @class DNSServer
- * @brief DNS服务器类，负责处理DNS查询请求
- */
-class DNSServer {
-public:
-    /**
-     * @brief 构造函数
-     */
-    DNSServer();
+// DNS服务器结构体
+typedef struct {
+    SOCKET sockfd;           // 服务器套接字
+    DNSResolver* resolver;   // DNS解析器实例
+    int initialized;         // 服务器初始化状态标志
+} DNSServer;
 
-    /**
-     * @brief 析构函数
-     */
-    ~DNSServer();
+// 调试日志函数
+void debug_log(const char* format, ...);
 
-    /**
-     * @brief 初始化DNS服务器
-     * @param port 服务器监听的端口号
-     * @return 初始化是否成功
-     */
-    bool init(int port);
-
-    /**
-     * @brief 加载域名配置文件
-     * @param filename 配置文件的路径
-     * @return 加载是否成功
-     */
-    bool loadDomainFile(const std::string& filename);
-
-    /**
-     * @brief 启动DNS服务器
-     * @return 启动是否成功
-     */
-    bool start();
-
-    /**
-     * @brief 处理DNS查询请求
-     * @param buffer 接收到的DNS查询数据
-     * @param length 数据长度
-     * @param clientAddr 客户端地址信息
-     */
-    void handleQuery(const char* buffer, size_t length, const sockaddr_in& clientAddr);
-
-private:
-    SOCKET sockfd;        ///< 服务器套接字
-    DNSResolver resolver; ///< DNS解析器实例
-    bool initialized;     ///< 服务器初始化状态标志
-};
+// 函数声明
+DNSServer* createServer(void);
+void destroyServer(DNSServer* server);
+int initServer(DNSServer* server, int port);
+int loadDomainFile(DNSServer* server, const char* filename);
+int startServer(DNSServer* server);
+void handleQuery(DNSServer* server, const char* buffer, size_t length, 
+                const struct sockaddr_in* clientAddr);
 
 #endif // DNS_SERVER_H 

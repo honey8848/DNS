@@ -7,8 +7,7 @@
 #ifndef DNS_MESSAGE_H
 #define DNS_MESSAGE_H
 
-#include <string>
-#include <vector>
+#include <stddef.h>
 #include "dns_types.h"
 
 /**
@@ -18,7 +17,7 @@
  * @return 提取出的域名
  * @details 解析DNS查询报文，提取出查询的域名
  */
-std::string extractDomain(const char* buffer, size_t length);
+char* extractDomain(const char* buffer, size_t length);
 
 /**
  * @brief 构建DNS响应报文
@@ -29,6 +28,7 @@ std::string extractDomain(const char* buffer, size_t length);
  * @return 构建好的DNS响应报文
  * @details 根据查询ID、域名和IP地址构建DNS响应报文
  */
-std::vector<char> buildDNSResponse(uint16_t id, const std::string& domain, const std::string& ip, bool isError);
+char* buildDNSResponse(uint16_t id, const char* domain, 
+                      const char* ip, int isError, size_t* responseLength);
 
 #endif // DNS_MESSAGE_H 
